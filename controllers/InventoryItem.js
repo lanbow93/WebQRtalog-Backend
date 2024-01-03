@@ -57,7 +57,9 @@ router.post('/', userLoggedIn, async (request, response) => {
 })
 
 /*
-Purpose: Update Inventory Item Name and Serial
+Purpose: Update Inventory Item
+Params: InventoryItem._id
+Needed: productName | category | quantity | serialNumber | currentAssignee | qrCode | barcode
 */
 router.put('/:id', userLoggedIn, async (request, response) => {
   try {
@@ -65,23 +67,39 @@ router.put('/:id', userLoggedIn, async (request, response) => {
     const serialNumber = request.body.serialNumber.toLowerCase().trim()
 
     const itemObject = {
-      productName: productName,
+      productName,
       category: request.body.category.toLowerCase().trim(),
       quantity: request.body.quantity,
-      serialNumber: serialNumber,
+      serialNumber,
       currentAssignee: request.body.currentAssignee.trim(),
       qrCode: `Name: ${productName} Serial: ${serialNumber}`,
       barcode: request.body.barcode.toLowerCase().trim()
     }
 
-    const updatedItem = await InventoryItem.findByIdAndUpdate(request.params.id, itemObject, {new: true})
-    successfulRequest(response, 'Successful Update', `${productName} has been updated successfully`, updatedItem)
+    const updatedItem = await InventoryItem.findByIdAndUpdate(
+      request.params.id,
+      itemObject,
+      { new: true }
+    )
+    successfulRequest(
+      response,
+      'Successful Update',
+      `${productName} has been updated successfully`,
+      updatedItem
+    )
   } catch (error) {
     failedRequest(response, 'Failed To Update Item', genericError, error)
   }
 })
 router.get('/', userLoggedIn, async (request, response) => {
   try {
+    const inventoryItems = await InventoryItem.find({})
+    successfulRequest(
+      response,
+      'Successful Request',
+      'Unable To See Items? ' + genericError,
+      inventoryItems
+    )
   } catch (error) {
     failedRequest(response, 'Unable To View Inventory', genericError)
   }
