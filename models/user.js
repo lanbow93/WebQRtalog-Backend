@@ -1,16 +1,19 @@
-import mongoose from "../config/database.js"
+import mongoose from '../config/database.js'
 
-const {Schema, model} = mongoose
+const { Schema, model } = mongoose
 
-const userSchema = new Schema({
-    username: {type: String, unique: true},
-    badgeName: {type: String, unique: true},
+const userSchema = new Schema(
+  {
+    username: { type: String, unique: true },
+    badgeName: { type: String, unique: true },
     password: String,
-    email: {type: String, unique: true},
+    email: { type: String, unique: true },
     resetToken: String,
     resetTokenExpiry: Date
-}, {timestamps: true})
+  },
+  { timestamps: true }
+)
 
-const User = model("User", userSchema)
+const User = model('User', userSchema)
 
 export default User

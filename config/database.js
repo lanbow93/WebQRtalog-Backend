@@ -1,13 +1,11 @@
 import mongoose from 'mongoose'
-import dotenv from "dotenv"
+import dotenv from 'dotenv'
 dotenv.config()
 const { MONGODB_URL } = process.env
 
 mongoose.set('strictQuery', false)
 
-mongoose.connect(MONGODB_URL, {
-
-})
+mongoose.connect(MONGODB_URL, {})
 
 mongoose.connection
   .on('open', () => console.log('Mongoose connected'))
