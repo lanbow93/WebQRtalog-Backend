@@ -149,7 +149,7 @@ router.put('/forgotpassword', async (request, response) => {
       } catch (error) {
         failedRequest(
           response,
-          'Unable To Update User',
+          'Failed Password Reset',
           'Unable To Reset Password',
           { error }
         )
@@ -157,13 +157,13 @@ router.put('/forgotpassword', async (request, response) => {
     } else {
       failedRequest(
         response,
-        'Unable To Locate Account',
-        'Email Not Found',
+        'Failed Password Reset',
+        'Unable To Locate Account: Email Not Found',
         'Failed To Reset Password'
       )
     }
   } catch (error) {
-    failedRequest(response, 'Email Does Not Exist', 'Unable To Locate Email', {
+    failedRequest(response, 'Failed Password Reset', 'Unable To Locate Email', {
       error
     })
   }
@@ -173,8 +173,9 @@ Purpose: Verifies string and updates password
 Needed: Params.id = resetToken string | username | password
 */
 router.put('/forgotpassword/:id', async (request, response) => {
+  const username = request.body.username.toLowerCase().trim()
   try {
-    const user = await User.findOne({ username: request.body.username })
+    const user = await User.findOne({ username })
     // If user exists
     if (user) {
       const timeDifference = Math.abs(
@@ -190,43 +191,41 @@ router.put('/forgotpassword/:id', async (request, response) => {
             await bcrypt.genSalt(10)
           )
           user.password = request.body.password
-          const newUser = await User.findOneAndUpdate(
-            { username: request.body.username },
-            user
-          )
+          const newUser = await User.findOneAndUpdate({ username }, user)
+          newUser.password = '**********'
           successfulRequest(
             response,
             'Successful Reset',
-            'Password Updated Successfully',
+            'Password Updated Successfully. Proceed To Login Screen.',
             { newUser }
           )
         } else {
           // Clears token after failed verification attempt
           user.resetToken = ''
-          await User.findOneAndUpdate({ username: request.body.username }, user)
+          await User.findOneAndUpdate({ username }, user)
           failedRequest(
             response,
-            'resetToken Expired',
-            'Failed Password Reset',
-            'Past Expiration'
+            'Password Reset Failed',
+            'Email Link No Longer Valid. Try Again.',
+            'resetToken Expired'
           )
         }
       } else {
         // Clears token after failed verification attempt
         user.resetToken = ''
-        await User.findOneAndUpdate({ username: request.body.username }, user)
+        await User.findOneAndUpdate({ username }, user)
         failedRequest(
           response,
-          'Failed To Verify resetToken',
-          'Failed Password Reset',
+          'Password Reset Failed',
+          'Email Link No Longer Valid. Try Again',
           "resetToken Doesn't Match"
         )
       }
     } else {
       failedRequest(
         response,
-        'Username Lookup Failed',
-        'Failed To Find User',
+        'Password Reset Failed',
+        'Unable To Find Username Submitted',
         'Unable To Find User'
       )
     }
@@ -234,7 +233,7 @@ router.put('/forgotpassword/:id', async (request, response) => {
     failedRequest(
       response,
       'Failed To Update Password',
-      'Failed To Update Password',
+      'Unknown Error. Please Try Again. If issue persists contact Webmaster.',
       { error }
     )
   }
@@ -312,55 +311,6 @@ router.post('/logout', async (request, response) => {
       message: 'Successful Logout',
       data: 'Token Deleted'
     })
-})
-/*
-Purpose: Deletes User
-Needed: Params.id = user._id (to delete) | requestor = requestor._id
-*/
-router.delete('/delete/:id', userLoggedIn, async (request, response) => {
-  try {
-    const possibleAdmin = await UserAccount.findOne({
-      accountID: request.query.requestor
-    })
-    if (possibleAdmin) {
-      if (possibleAdmin.isSiteAdmin) {
-        const deletedUser = await User.findByIdAndDelete(request.params.id)
-        if (deletedUser) {
-          successfulRequest(
-            response,
-            'Successful Request',
-            'User Successfully Deleted. Remember to remove from all Groups',
-            deletedUser
-          )
-        } else {
-          failedRequest(
-            response,
-            '_id Not Located',
-            'User Not Found',
-            'Unable To Find User'
-          )
-        }
-      } else {
-        failedRequest(
-          response,
-          'User Not Site Admin',
-          'Unable To Delete User',
-          'Authorization Error'
-        )
-      }
-    } else {
-      failedRequest(
-        response,
-        'Failed To Locate Requestor _id',
-        'Failed User Deletion',
-        'Unable To Locate Requestor'
-      )
-    }
-  } catch (error) {
-    failedRequest(response, 'Failed Delete Request', 'Unable To Delete User', {
-      error
-    })
-  }
 })
 
 export default router

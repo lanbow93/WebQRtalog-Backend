@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
+import { failedRequest } from './SharedFunctions.js'
 dotenv.config()
 
 const SECRET = process.env.SECRET || ''
@@ -15,7 +16,12 @@ export async function userLoggedIn (request, response, next) {
       request.payload = payload
       next()
     } else {
-      throw 'Not logged In'
+      failedRequest(
+        response,
+        'Failed Action',
+        'User Not Logged In',
+        'No User Token'
+      )
     }
   } catch (error) {
     response.status(400).json({
