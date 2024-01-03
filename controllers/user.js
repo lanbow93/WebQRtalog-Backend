@@ -24,7 +24,7 @@ router.post("/signup", async (request, response) => {
         request.body.password = await bcrypt.hash(request.body.password, await bcrypt.genSalt(10))
         const userObject = {
             username: request.body.username.toLowerCase().trim(),
-            badgeName: request.body.badgeName.toLowerCase().trim(),
+            badgeName: request.body.badgeName.trim(),
             password: request.body.password,
             email: request.body.email.toLowerCase().trim(),
             resetToken: "",
@@ -54,14 +54,16 @@ Needed: username | password
 router.post("/login", async(request, response) => {
     try {
         request.body.username = request.body.username.toLowerCase()
-        const {username, password} = request.body
+        const username = request.body.username.toLowerCase().trim()
+        const password = request.body.username.toLowerCase().trim()
+    
         // Searching collection for username
         const userObject = await User.findOne({username})
+        console.log(userObject);
         
         // If user exists checks for password
-        if (user){
-            const userAccountAccount = await UserAccount.findOne({accountID: user._id})
-            const passwordCheck = await bcrypt.compare(password, user.password)
+        if (userObject){
+            const passwordCheck = await bcrypt.compare(password, userObject.password)
             if(passwordCheck){
                 const payload = {username}
                 const token = await jwt.sign(payload, SECRET)
@@ -70,7 +72,7 @@ router.post("/login", async(request, response) => {
                     path:"/",
                     sameSite: "none",
                     secure: request.hostname === "localhost" ? false : true
-                }).json({status: "Logged In", message: "Successfully Logged In", data: userAccount})
+                }).json({status: "Logged In", message: "Successfully Logged In", data: userObject.badgeName})
             } else {
                 failedRequest(response, "Login Failed", "Invalid Password/Username", "Incorrect P/U")
             }
