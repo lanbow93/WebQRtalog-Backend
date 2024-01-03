@@ -6,6 +6,7 @@ import { userLoggedIn } from '../utils/UserVerified.js'
 const router = express.Router()
 const genericError =
   'Unknown Error. Refresh And Try Again. If Issue Persists Contact Webmaster'
+
 /*
 Purpose: Creates a new Inventory Item & Possession chain
 Needed: productName | category | quantity | serialNumber
