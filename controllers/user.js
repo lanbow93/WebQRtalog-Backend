@@ -33,7 +33,8 @@ router.post("/signup", async (request, response) => {
         const user = await User.create(userObject)
         successfulRequest(response, "Successful User Creation", "New User Created", user)
     }catch(error){
-        let message = "Unknown"
+        console.log(error)
+        let message = "Unknown Error. Please Try Again. If issue persists contact Webmaster."
         if(error.keyPattern.badgeName){
             message = "Badge Name Already Exists"
         }
