@@ -91,6 +91,10 @@ router.put('/:id', userLoggedIn, async (request, response) => {
     failedRequest(response, 'Failed To Update Item', genericError, error)
   }
 })
+
+/*
+Purpose: View All Inventory Items
+*/
 router.get('/', userLoggedIn, async (request, response) => {
   try {
     const inventoryItems = await InventoryItem.find({})
@@ -102,6 +106,23 @@ router.get('/', userLoggedIn, async (request, response) => {
     )
   } catch (error) {
     failedRequest(response, 'Unable To View Inventory', genericError)
+  }
+})
+/*
+Purpose: View Single Item
+Params: InventoryItem._id
+*/
+router.get('/:id', userLoggedIn, async (request, response) => {
+  try {
+    const inventoryItem = await InventoryItem.findById(request.params.id)
+    successfulRequest(
+      response,
+      'Successful Request',
+      'Unable To See Items? ' + genericError,
+      inventoryItem
+    )
+  } catch (error) {
+    failedRequest(response, 'Unable To View Inventory', genericError, error)
   }
 })
 
