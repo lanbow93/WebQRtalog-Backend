@@ -33,6 +33,6 @@ const possessionSchema = new Schema(
   { timestamps: true }
 )
 
-const PossessionSchema = model('PossessionSchema', possessionSchema)
+const Possession = model('Possession', possessionSchema)
 
-export default PossessionSchema
+export default Possession
