@@ -26,7 +26,8 @@ const inventoryItemSchema = new Schema(
     },
     qrCode: {
       type: String,
-      required: true
+      required: true,
+      unique: true
     },
     barcode: {
       type: String

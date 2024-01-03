@@ -256,7 +256,7 @@ router.put('/emailupdate/:id', userLoggedIn, async (request, response) => {
           new: true
         })
         if (newUser) {
-          newUser.password = "**********"
+          newUser.password = '**********'
           successfulRequest(
             response,
             'Update Successful',
@@ -288,9 +288,14 @@ router.put('/emailupdate/:id', userLoggedIn, async (request, response) => {
       )
     }
   } catch (error) {
-    failedRequest(response, 'Failed To Update Email', 'Unable To Update. Try Again. If Issue Persists Contact Webmaster', {
-      error
-    })
+    failedRequest(
+      response,
+      'Failed To Update Email',
+      'Unable To Update. Try Again. If Issue Persists Contact Webmaster',
+      {
+        error
+      }
+    )
   }
 })
 /*
