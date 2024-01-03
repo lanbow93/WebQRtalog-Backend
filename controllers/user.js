@@ -256,6 +256,7 @@ router.put('/emailupdate/:id', userLoggedIn, async (request, response) => {
           new: true
         })
         if (newUser) {
+          newUser.password = "**********"
           successfulRequest(
             response,
             'Update Successful',
@@ -265,15 +266,15 @@ router.put('/emailupdate/:id', userLoggedIn, async (request, response) => {
         } else {
           failedRequest(
             response,
-            'User Found, Failed To Update Email',
             'Failed To Update Email',
+            'User Found, Failed To Update Email',
             'User Located Unable To Update'
           )
         }
       } else {
         failedRequest(
           response,
-          'Incorrect Password',
+          'Failed To Update Email',
           'Failed To Update Email: Password Incorrect',
           'Password Error'
         )
@@ -287,7 +288,7 @@ router.put('/emailupdate/:id', userLoggedIn, async (request, response) => {
       )
     }
   } catch (error) {
-    failedRequest(response, 'Failed To Locate _ID', 'Failed To Update Email', {
+    failedRequest(response, 'Failed To Update Email', 'Unable To Update. Try Again. If Issue Persists Contact Webmaster', {
       error
     })
   }
