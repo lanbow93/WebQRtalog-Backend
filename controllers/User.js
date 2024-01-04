@@ -242,7 +242,7 @@ router.put('/forgotpassword/:id', async (request, response) => {
 Purpose: Update Email After Accepting Password On File
 Needed: Params.id = user._id | password | new Email
 */
-router.put('/emailupdate/:id', userLoggedIn, async (request, response) => {
+router.put('/emailupdate/:id', async (request, response) => {
   try {
     const user = await User.findById(request.params.id)
     if (user) {

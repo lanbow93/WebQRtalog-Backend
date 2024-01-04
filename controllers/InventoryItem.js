@@ -11,7 +11,7 @@ const genericError =
 Purpose: Creates a new Inventory Item & Possession chain
 Needed: productName | category | quantity | serialNumber
 */
-router.post('/', userLoggedIn, async (request, response) => {
+router.post('/', async (request, response) => {
   try {
     const productName = request.body.productName.toLowerCase().trim()
     const serialNumber = request.body.serialNumber.toLowerCase().trim()
@@ -62,7 +62,7 @@ Purpose: Update Inventory Item
 Params: InventoryItem._id
 Needed: productName | category | quantity | serialNumber | currentAssignee | qrCode | barcode
 */
-router.put('/:id', userLoggedIn, async (request, response) => {
+router.put('/:id', async (request, response) => {
   try {
     const productName = request.body.productName.toLowerCase().trim()
     const serialNumber = request.body.serialNumber.toLowerCase().trim()
@@ -96,7 +96,7 @@ router.put('/:id', userLoggedIn, async (request, response) => {
 /*
 Purpose: View All Inventory Items
 */
-router.get('/', userLoggedIn, async (request, response) => {
+router.get('/', async (request, response) => {
   try {
     const inventoryItems = await InventoryItem.find({})
     successfulRequest(
@@ -113,7 +113,7 @@ router.get('/', userLoggedIn, async (request, response) => {
 Purpose: View Single Item
 Params: InventoryItem._id
 */
-router.get('/:id', userLoggedIn, async (request, response) => {
+router.get('/:id', async (request, response) => {
   try {
     const inventoryItem = await InventoryItem.findById(request.params.id)
     successfulRequest(
