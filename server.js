@@ -26,7 +26,7 @@ app.get('/', (request, response) => {
   response.send('Server is functional')
 })
 
-const PORT = 7777
+const PORT = process.env.PORT | 7777
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`)
 })
