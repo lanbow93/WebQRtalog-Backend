@@ -26,7 +26,7 @@ router.get('/', userLoggedIn, async (request, response) => {
 /*
   Purpose: View Single Possession Chain by Asset ID
   Params: InventoryItem._id
-  */
+*/
 router.get('/:inventoryId', userLoggedIn, async (request, response) => {
   try {
     const possession = await Possession.findOne({
@@ -40,6 +40,51 @@ router.get('/:inventoryId', userLoggedIn, async (request, response) => {
     )
   } catch (error) {
     failedRequest(response, 'Unable To View Inventory', genericError, error)
+  }
+})
+
+/*
+  Purpose: Add a change of possession
+  Params: InventoryItem._id
+  Needed: badgeName | action | possesor
+*/
+
+router.put('/:inventoryId', userLoggedIn, async (request, response) => {
+  try {
+    const possessionChainLink = {
+      user: request.body.badgeName.trim(),
+      action: request.body.action,
+      possesor: request.body.possesor.trim(),
+      timestamp: new Date()
+    }
+    const possession = await Possession.findOne({
+      assetId: request.params.inventoryId
+    })
+
+    possession.possessionHistory.push(possessionChainLink)
+
+    const newPossession = await Possession.findByIdAndUpdate(
+      possession._id,
+      possession,
+      { new: true }
+    )
+
+    const oldInventoryItem = await InventoryItem.findById(newPossession.assetId)
+    oldInventoryItem.currentAssignee = possessionChainLink.possesor
+    const newInventoryItem = await InventoryItem.findByIdAndUpdate(
+      newPossession.assetId,
+      oldInventoryItem,
+      { new: true }
+    )
+
+    successfulRequest(
+      response,
+      'Successful Update',
+      `Record Was Successfully. Item is now assigned to ${possessionChainLink.possesor}`,
+      { newPossession, newInventoryItem }
+    )
+  } catch (error) {
+    failedRequest(response, 'Unable To Update Records', genericError, error)
   }
 })
 
