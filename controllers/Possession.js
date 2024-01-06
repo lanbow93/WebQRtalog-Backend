@@ -10,7 +10,7 @@ const genericError =
 /*
 Purpose: View All Possession Chains
 */
-router.get('/', async (request, response) => {
+router.get('/', userLoggedIn, async (request, response) => {
   try {
     const possessions = await Possession.find({})
     successfulRequest(
@@ -27,7 +27,7 @@ router.get('/', async (request, response) => {
   Purpose: View Single Possession Chain by Asset ID
   Params: InventoryItem._id
 */
-router.get('/:inventoryId', async (request, response) => {
+router.get('/:inventoryId', userLoggedIn, async (request, response) => {
   try {
     const possession = await Possession.findOne({
       assetId: request.params.inventoryId
@@ -49,7 +49,7 @@ router.get('/:inventoryId', async (request, response) => {
   Needed: badgeName | action | possesor
 */
 
-router.put('/:inventoryId', async (request, response) => {
+router.put('/:inventoryId', userLoggedIn, async (request, response) => {
   try {
     const possessionChainLink = {
       user: request.body.badgeName.trim(),

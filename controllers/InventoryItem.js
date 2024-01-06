@@ -11,7 +11,7 @@ const genericError =
 Purpose: Creates a new Inventory Item & Possession chain
 Needed: productName | category | quantity | serialNumber
 */
-router.post('/', async (request, response) => {
+router.post('/', userLoggedIn, async (request, response) => {
   try {
     const productName = request.body.productName.toLowerCase().trim()
     const serialNumber = request.body.serialNumber.toLowerCase().trim()
@@ -62,7 +62,7 @@ Purpose: Update Inventory Item
 Params: InventoryItem._id
 Needed: productName | category | quantity | serialNumber | currentAssignee | qrCode | barcode
 */
-router.put('/:id', async (request, response) => {
+router.put('/:id', userLoggedIn, async (request, response) => {
   try {
     const productName = request.body.productName.toLowerCase().trim()
     const serialNumber = request.body.serialNumber.toLowerCase().trim()
@@ -96,7 +96,7 @@ router.put('/:id', async (request, response) => {
 /*
 Purpose: View All Inventory Items
 */
-router.get('/', async (request, response) => {
+router.get('/', userLoggedIn, async (request, response) => {
   try {
     const inventoryItems = await InventoryItem.find({})
     successfulRequest(
@@ -106,14 +106,42 @@ router.get('/', async (request, response) => {
       inventoryItems
     )
   } catch (error) {
-    failedRequest(response, 'Unable To View Inventory', genericError)
+    failedRequest(
+      response,
+      'Unkown Error',
+      'Unable To View Inventory',
+      genericError
+    )
   }
 })
+
+/*
+Purpose: View All Unique Categories
+*/
+router.get('/unique-categories', userLoggedIn, async (request, response) => {
+  try {
+    const uniqueCategories = await InventoryItem.distinct('category')
+    successfulRequest(
+      response,
+      'Successful Request',
+      'Unable To Retrieve Categories? ' + genericError,
+      uniqueCategories
+    )
+  } catch (error) {
+    failedRequest(
+      response,
+      'Unknown Error',
+      'Unable To Retrieve Categories',
+      genericError
+    )
+  }
+})
+
 /*
 Purpose: View Single Item
 Params: InventoryItem._id
 */
-router.get('/:id', async (request, response) => {
+router.get('/:id', userLoggedIn, async (request, response) => {
   try {
     const inventoryItem = await InventoryItem.findById(request.params.id)
     successfulRequest(
@@ -123,7 +151,13 @@ router.get('/:id', async (request, response) => {
       inventoryItem
     )
   } catch (error) {
-    failedRequest(response, 'Unable To View Inventory', genericError, error)
+    failedRequest(
+      response,
+      'Unknown Error',
+      'Unable To View Inventory',
+      genericError,
+      error
+    )
   }
 })
 
