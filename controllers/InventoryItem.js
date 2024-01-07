@@ -106,9 +106,37 @@ router.get('/', userLoggedIn, async (request, response) => {
       inventoryItems
     )
   } catch (error) {
-    failedRequest(response, 'Unable To View Inventory', genericError)
+    failedRequest(
+      response,
+      'Unkown Error',
+      'Unable To View Inventory',
+      genericError
+    )
   }
 })
+
+/*
+Purpose: View All Unique Categories
+*/
+router.get('/unique-categories', userLoggedIn, async (request, response) => {
+  try {
+    const uniqueCategories = await InventoryItem.distinct('category')
+    successfulRequest(
+      response,
+      'Successful Request',
+      'Unable To Retrieve Categories? ' + genericError,
+      uniqueCategories
+    )
+  } catch (error) {
+    failedRequest(
+      response,
+      'Unknown Error',
+      'Unable To Retrieve Categories',
+      genericError
+    )
+  }
+})
+
 /*
 Purpose: View Single Item
 Params: InventoryItem._id
@@ -123,7 +151,13 @@ router.get('/:id', userLoggedIn, async (request, response) => {
       inventoryItem
     )
   } catch (error) {
-    failedRequest(response, 'Unable To View Inventory', genericError, error)
+    failedRequest(
+      response,
+      'Unknown Error',
+      'Unable To View Inventory',
+      genericError,
+      error
+    )
   }
 })
 
